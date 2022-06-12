@@ -27,7 +27,7 @@ final class Member implements Stringable
         return new Member($name, $birthDate);
     }
 
-    public function giveBirth(string $name, ?DateTimeImmutable $birthDate = null) : Member
+    public function giveBirth(string $name, DateTimeImmutable $birthDate = new DateTimeImmutable()) : Member
     {
         $nameChecker = UniqueNameChecker::fromFamilyHead($this);
 
@@ -35,7 +35,6 @@ final class Member implements Stringable
             throw new NotUniqueNameException($name);
         }
 
-        $birthDate = $birthDate ?? new DateTimeImmutable();
         $child = new Member($name, $birthDate, $this);
 
         // In PHP, a "latest" DateTime is considered "bigger".
