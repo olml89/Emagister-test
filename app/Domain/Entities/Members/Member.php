@@ -4,6 +4,9 @@ namespace Heritages\App\Domain\Entities\Members;
 
 use DateTimeImmutable;
 use Stringable;
+
+use Heritages\App\Domain\Services\UniqueNameChecker;
+use Heritages\App\Domain\Exceptions\NotUniqueNameException;
 use Heritages\App\Domain\Exceptions\InvalidBirthDateException;
 
 final class Member implements Stringable
@@ -24,8 +27,15 @@ final class Member implements Stringable
         return new Member($name, $birthDate);
     }
 
-    public function giveBirth(string $name, DateTimeImmutable $birthDate) : Member
+    public function giveBirth(string $name, ?DateTimeImmutable $birthDate = null) : Member
     {
+        $nameChecker = UniqueNameChecker::fromFamilyHead($this);
+
+        if (!$nameChecker->checkIsUnique($name)) {
+            throw new NotUniqueNameException($name);
+        }
+
+        $birthDate = $birthDate ?? new DateTimeImmutable();
         $child = new Member($name, $birthDate, $this);
 
         // In PHP, a "latest" DateTime is considered "bigger".
