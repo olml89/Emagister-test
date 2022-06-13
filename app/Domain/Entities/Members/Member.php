@@ -8,6 +8,8 @@ use Stringable;
 use Heritages\App\Domain\Services\UniqueNameChecker;
 use Heritages\App\Domain\Exceptions\NotUniqueNameException;
 use Heritages\App\Domain\Exceptions\InvalidBirthDateException;
+use Heritages\App\Domain\Entities\Assets\AssetInterface;
+use Heritages\App\Domain\Entities\Assets\AssetCollection;
 
 final class Member implements Stringable
 {
@@ -16,11 +18,15 @@ final class Member implements Stringable
      */
     private array $children = [];
 
+    private AssetCollection $assets;
+
     private function __construct(
         private readonly string $name,
         private readonly DateTimeImmutable $birthDate,
         private readonly ?Member $parent = null,
-    ) {}
+    ) {
+        $this->assets = new AssetCollection();
+    }
 
     public static function born(string $name, DateTimeImmutable $birthDate) : Member
     {
@@ -86,6 +92,37 @@ final class Member implements Stringable
     public function getChildren() : array
     {
         return $this->children;
+    }
+
+    public function hasChildren() : bool
+    {
+        return count($this->children) > 0;
+    }
+
+    public function isTheOldestSon() : bool
+    {
+        if (!$this->parent) {
+            return false;
+        }
+
+        return array_search($this, $this->parent->getChildren()) === 0;
+    }
+
+    public function getAssets() : AssetCollection
+    {
+        return $this->assets;
+    }
+
+    public function addAsset(AssetInterface $asset) : Member
+    {
+        $this->assets->add($asset);
+        return $this;
+    }
+
+    public function addAssets(AssetInterface ...$assets) : Member
+    {
+        $this->assets->addMultiple(...$assets);
+        return $this;
     }
 
     public function __toString() : string
