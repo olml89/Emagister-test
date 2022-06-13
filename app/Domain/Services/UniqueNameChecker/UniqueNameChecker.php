@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Heritages\App\Domain\Services;
+namespace Heritages\App\Domain\Services\UniqueNameChecker;
 
 use Heritages\App\Domain\Entities\Members\Member;
 

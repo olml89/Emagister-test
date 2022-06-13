@@ -6,7 +6,7 @@ use DateTimeImmutable;
 
 use PHPUnit\Framework\TestCase;
 
-use Heritages\App\Domain\Services\UniqueNameChecker;
+use Heritages\App\Domain\Services\UniqueNameChecker\UniqueNameChecker;
 use Heritages\App\Domain\Entities\Members\Member;
 
 final class UniqueNameCheckerTest extends TestCase
