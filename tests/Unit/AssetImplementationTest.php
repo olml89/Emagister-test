@@ -43,27 +43,27 @@ final class AssetImplementationTest extends TestCase
         // Money
         $money = new Money(100);
         $moreMoney = new Money(50);
-        $combinedMoney = $money->add($moreMoney);
-        $combinedMoneyValue = (100 + 50) * $this->moneyValue;
-        $this->assertEquals($combinedMoneyValue, $combinedMoney->getValue());
+        $money = $money->add($moreMoney);
+        $moneyValue = (100 + 50) * $this->moneyValue;
+        $this->assertEquals($moneyValue, $money->getValue());
 
         // Lands
         $lands = new Lands(100);
         $moreLands = new Lands(200);
-        $combinedLands = $lands->add($moreLands);
-        $combinedLandsValue = (100 + 200) * $this->squareMeterValue;
-        $this->assertEquals($combinedLandsValue, $combinedLands->getValue());
+        $lands = $lands->add($moreLands);
+        $landsValue = (100 + 200) * $this->squareMeterValue;
+        $this->assertEquals($landsValue, $lands->getValue());
 
         // RealEstate
-        $property = new RealEstate(1);
-        $anotherProperty = new RealEstate(1);
-        $combinedProperties = $property->add($anotherProperty);
-        $combinedPropertiesValue = (1 + 1) * $this->propertyValue;
-        $this->assertEquals($combinedPropertiesValue, $combinedProperties->getValue());
+        $properties = new RealEstate(1);
+        $anotherProperties = new RealEstate(1);
+        $properties = $properties->add($anotherProperties);
+        $propertiesValue = (1 + 1) * $this->propertyValue;
+        $this->assertEquals($propertiesValue, $properties->getValue());
 
         // If we add assets of different types, there's an exception
         $this->expectException(DifferentAssetTypesException::class);
         $money->add($lands);
     }
-    
+
 }
