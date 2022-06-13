@@ -70,6 +70,27 @@ final class MemberTest extends TestCase
         $thirdCousin->giveBirth('Josep');
     }
 
+    public function testChildrenAreCorrectlyOrderedWhenGivingBirth() : void
+    {
+        $parent = Member::born('Josep', DateTimeImmutable::createFromFormat('d/m/Y', '02/02/1920'));
+
+        // We make 3 children from younger to older and expect to see them ordered correctly
+        $thirdSon = $parent->giveBirth('Francesc', DateTimeImmutable::createFromFormat('d/m/Y', '07/07/1953'));
+        $secondSon = $parent->giveBirth('Pere', DateTimeImmutable::createFromFormat('d/m/Y', '06/06/1952'));
+        $firstSon = $parent->giveBirth('Joan', DateTimeImmutable::createFromFormat('d/m/Y', '05/05/1950'));
+        $this->assertEquals(0, array_search($firstSon, $parent->getChildren()));
+        $this->assertEquals(1, array_search($secondSon, $parent->getChildren()));
+        $this->assertEquals(2, array_search($thirdSon, $parent->getChildren()));
+
+        // We add another child with the same birthDate as the older one, but expect to see him first because it has
+        // a name that comes first in alphabetical order
+        $previousSon = $parent->giveBirth('Albert', DateTimeImmutable::createFromFormat('d/m/Y', '05/05/1950'));
+        $this->assertEquals(0, array_search($previousSon, $parent->getChildren()));
+        $this->assertEquals(1, array_search($firstSon, $parent->getChildren()));
+        $this->assertEquals(2, array_search($secondSon, $parent->getChildren()));
+        $this->assertEquals(3, array_search($thirdSon, $parent->getChildren()));
+    }
+
     public function testTheyDieAt100YearsOld() : void
     {
         $josep = Member::born('Josep', DateTimeImmutable::createFromFormat('d/m/Y H:i:s', '02/02/1920 00:00:00'));

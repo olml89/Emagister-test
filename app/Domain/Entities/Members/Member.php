@@ -44,6 +44,19 @@ final class Member implements Stringable
         }
 
         $this->children[] = $child;
+
+        // Order the children: from older to younger
+        usort(
+            $this->children,
+            function(Member $firstChild, Member $secondChild) : int
+            {
+                if ($firstChild->getBirthDate() === $secondChild->getBirthDate()) {
+                    return $firstChild->getName() < $secondChild->getName() ? -1 : 1;
+                }
+                return $firstChild->getBirthDate() < $secondChild->getBirthDate() ? -1 : 1;
+            }
+        );
+
         return $child;
     }
 
