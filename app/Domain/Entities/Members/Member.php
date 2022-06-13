@@ -57,7 +57,7 @@ final class Member implements Stringable
         return $this->birthDate;
     }
 
-    public function isDead(DateTimeImmutable $when) : bool
+    public function isDead(DateTimeImmutable $when = new DateTimeImmutable()) : bool
     {
         return ($this->birthDate->diff($when)->y >= 100);
     }
