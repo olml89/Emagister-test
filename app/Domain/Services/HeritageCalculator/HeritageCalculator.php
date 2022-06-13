@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Heritages\App\Domain\Services;
+namespace Heritages\App\Domain\Services\HeritageCalculator;
 
 use DateTimeImmutable;
 
@@ -9,7 +9,7 @@ use Heritages\App\Domain\Entities\Assets\Lands;
 use Heritages\App\Domain\Entities\Assets\RealEstate;
 use Heritages\App\Domain\Entities\Assets\Money;
 
-final class HeritageCalculator
+final class HeritageCalculator implements HeritageCalculatorInterface
 {
 
     /**
@@ -189,24 +189,6 @@ final class HeritageCalculator
         return $this->getMoneyValueFromAncestors($member, $member, $when)
             + $this->getLandsValueFromAncestors($member, $when)
             + $this->getRealEstateValueFromAncestors($member, $when);
-    }
-
-    /**
-     * This function returns the total patrimony of a family member. It is a total sum of his own assets and his heritage
-     * (amount of value inherited from his ancestors at a given time)
-     *
-     * @param Member $member
-     * @param DateTimeImmutable $when
-     *
-     * @return int
-     */
-    public function getPatrimony(Member $member, DateTimeImmutable $when = new DateTimeImmutable()) : int
-    {
-        if ($member->isDead($when)) {
-            return 0;
-        }
-
-        return $this->getHeritage($member, $when) + $member->getAssets()->getValue();
     }
 
 }

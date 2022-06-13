@@ -10,7 +10,7 @@ use Heritages\App\Domain\Entities\Members\Member;
 use Heritages\App\Domain\Entities\Assets\Money;
 use Heritages\App\Domain\Entities\Assets\Lands;
 use Heritages\App\Domain\Entities\Assets\RealEstate;
-use Heritages\App\Domain\Services\HeritageCalculator;
+use Heritages\App\Domain\Services\HeritageCalculator\HeritageCalculator;
 
 final class HeritageCalculatorTest extends TestCase
 {
@@ -374,33 +374,6 @@ final class HeritageCalculatorTest extends TestCase
         $this->assertEquals(12500, $this->heritageCalculator->getHeritage($H, $certainDeadDateForB));
         $this->assertEquals(4167, $this->heritageCalculator->getHeritage($I, $certainDeadDateForB));
         $this->assertEquals(4166, $this->heritageCalculator->getHeritage($J, $certainDeadDateForB));
-
-        /*
-         * This is even more complicated because we not only get the heritage, but the patrimony: we calculate
-         * the amount of wealth for each family member, including heritage (inherited goods) and its own assets.
-         * 
-         * We expect:
-         * A = 0
-         * B = (3000 + 2 * 1000000 + 6000 * 300) + (25000 + 4 * 1000000 + 5000 * 300) = 9328000
-         * D = (1000 + 200 * 300) + (4167) = 65167
-         * I = (1 * 1000000) + (2084) = 1002084
-         * J = 2083
-         * E = 8333
-         * F = (12000) + (8333) = 20333
-         * C = (10000 + 5 * 1000000) + (25000 + 3 * 1000000) = 8035000
-         * G = (500 + 500 * 300) + (12500) = 163000
-         * H = (2000 + 7000 * 300 + 3 * 1000000) + (12500) = 5114500
-         */
-        $this->assertEquals(0, $this->heritageCalculator->getPatrimony($A));
-        $this->assertEquals(9328000, $this->heritageCalculator->getPatrimony($B));
-        $this->assertEquals(65167, $this->heritageCalculator->getPatrimony($D));
-        $this->assertEquals(1002084, $this->heritageCalculator->getPatrimony($I));
-        $this->assertEquals(2083, $this->heritageCalculator->getPatrimony($J));
-        $this->assertEquals(8333, $this->heritageCalculator->getPatrimony($E));
-        $this->assertEquals(20333, $this->heritageCalculator->getPatrimony($F));
-        $this->assertEquals(8035000, $this->heritageCalculator->getPatrimony($C));
-        $this->assertEquals(163000, $this->heritageCalculator->getPatrimony($G));
-        $this->assertEquals(5114500, $this->heritageCalculator->getPatrimony($H));
     }
 
 }

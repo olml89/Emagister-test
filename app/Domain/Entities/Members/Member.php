@@ -5,11 +5,12 @@ namespace Heritages\App\Domain\Entities\Members;
 use DateTimeImmutable;
 use Stringable;
 
-use Heritages\App\Domain\Services\UniqueNameChecker;
 use Heritages\App\Domain\Exceptions\NotUniqueNameException;
 use Heritages\App\Domain\Exceptions\InvalidBirthDateException;
 use Heritages\App\Domain\Entities\Assets\AssetInterface;
 use Heritages\App\Domain\Entities\Assets\AssetCollection;
+use Heritages\App\Domain\Services\UniqueNameChecker\UniqueNameChecker;
+use Heritages\App\Domain\Services\HeritageCalculator\HeritageCalculatorInterface;
 
 final class Member implements Stringable
 {
@@ -123,6 +124,18 @@ final class Member implements Stringable
     {
         $this->assets->addMultiple(...$assets);
         return $this;
+    }
+
+    public function getHeritage(HeritageCalculatorInterface $heritageCalculator, DateTimeImmutable $when = new DateTimeImmutable()) : int
+    {
+        return $heritageCalculator->getHeritage($this, $when);
+    }
+
+    public function getPatrimony(HeritageCalculatorInterface $heritageCalculator, DateTimeImmutable $when = new DateTimeImmutable()) : int
+    {
+        return $this->isDead($when)
+            ? 0
+            : $this->getHeritage($heritageCalculator, $when) + $this->assets->getValue();
     }
 
     public function __toString() : string
