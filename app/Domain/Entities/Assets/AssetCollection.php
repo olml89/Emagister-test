@@ -57,7 +57,7 @@ final class AssetCollection
      * @param class-string<AssetInterface>|null $assetType
      * @return int
      */
-    public function getValue(?string $assetType) : int
+    public function getValue(?string $assetType = null) : int
     {
         if (!is_null($assetType)) {
             return $this->get($assetType)?->getValue();
