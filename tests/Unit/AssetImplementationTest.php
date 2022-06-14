@@ -13,13 +13,14 @@ use Heritages\App\Domain\Exceptions\DifferentAssetTypesException;
 
 final class AssetImplementationTest extends TestCase
 {
-    private int $moneyValue = 1;
-    private int $squareMeterValue;
-    private int $propertyValue;
+    private readonly int $moneyValue;
+    private readonly int $squareMeterValue;
+    private readonly int $propertyValue;
 
     public function setUp() : void
     {
         parent::setUp();
+        $this->moneyValue = 1;
         $this->squareMeterValue = (new ReflectionClass(Lands::class))->getConstant('SQUARE_METER_VALUE');
         $this->propertyValue = (new ReflectionClass(RealEstate::class))->getConstant('PROPERTY_VALUE');
     }

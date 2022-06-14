@@ -11,7 +11,7 @@ use Heritages\App\Domain\Entities\Members\Member;
 
 final class UniqueNameCheckerTest extends TestCase
 {
-    private Member $member;
+    private readonly Member $member;
 
     public function setUp(): void
     {

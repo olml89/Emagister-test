@@ -8,7 +8,7 @@ final class UniqueNameChecker
 {
 
     public function __construct(
-        private Member $member,
+        private readonly Member $member,
     ) {}
 
     public static function fromFamilyHead(Member $member) : UniqueNameChecker
