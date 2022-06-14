@@ -12,5 +12,11 @@
         "psr-4": {
             "Heritages\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "tests": "XDEBUG_MODE=coverage ./vendor/bin/phpunit tests --coverage-clover coverage.xml"
+    },
+    "scripts-descriptions": {
+        "tests": "Run all PHPUnit tests and generate a coverage.xml clover report"
     }
 }
