@@ -261,8 +261,6 @@ final class HeritageCalculatorTest extends TestCase
         // Add 2 properties to B
         $B->addAsset(new RealEstate(3));
 
-        // If B dies we want to see 2 properties for E, 3 properties for F, 3 properties for G
-
         /**
          *                  A
          *              (deceased)
