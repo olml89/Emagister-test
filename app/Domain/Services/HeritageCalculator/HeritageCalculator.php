@@ -25,7 +25,7 @@ final class HeritageCalculator implements HeritageCalculatorInterface
         $splitAmount = intdiv($amount, $numBrothers);
 
         /*
-         * How to round up: assuming the children in the tree are always ordered from older to younger left-to-write,
+         * How to round up: assuming the children in the tree are always ordered from older to younger left-to-right,
          * if there is some money leftover, it is always assigned euro by euro starting from the older child.
          *
          *               50 / 3 = 16'666666, 50 % 3 = 2
