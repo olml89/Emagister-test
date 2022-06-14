@@ -4,3 +4,8 @@
 vendor/
 
 .phpunit.result.cache
+
+phpunit.xml.bak
+
+clover.xml
+coverage.xml
