@@ -4,6 +4,7 @@ namespace Heritages\Tests\Unit;
 
 use DateTimeImmutable;
 
+use Heritages\App\Domain\Entities\Assets\AssetCollection;
 use PHPUnit\Framework\TestCase;
 
 use Heritages\App\Domain\Entities\Members\Member;
@@ -13,6 +14,7 @@ use Heritages\App\Domain\Entities\Assets\Lands;
 use Heritages\App\Domain\Entities\Assets\Money;
 use Heritages\App\Domain\Entities\Assets\RealEstate;
 use Heritages\App\Domain\Services\HeritageCalculator\HeritageCalculator;
+use ReflectionClass;
 
 final class MemberTest extends TestCase
 {
@@ -29,15 +31,35 @@ final class MemberTest extends TestCase
         $this->assertEmpty($josep->getChildren());
     }
 
+    public function testStringable() : void
+    {
+        $name = 'Josep';
+        $birthDate = DateTimeImmutable::createFromFormat('d/m/Y', '02/02/1920');
+        $stringified = 'Josep, 02/02/1920';
+        $member = Member::born($name, $birthDate);
+
+        $this->assertEquals($stringified, (string)$member);
+        $this->assertNull($member->getParent());
+        $this->assertEmpty($member->getChildren());
+    }
+
     public function testItCanGiveBirth() : void
     {
         $parent = Member::born('Josep', DateTimeImmutable::createFromFormat('d/m/Y', '02/02/1920'));
+        $this->assertNull($parent->getParent());
+        $this->assertEmpty($parent->getChildren());
+        $this->assertFalse($parent->hasChildren());
+
         $childName = 'Joan';
         $childBirthDate = DateTimeImmutable::createFromFormat('d/m/Y', '05/05/1950');
         $child = $parent->giveBirth($childName, $childBirthDate);
-
+        $this->assertEquals($parent, $child->getParent());
         $this->assertEquals($childName, $child->getName());
         $this->assertEquals($childBirthDate, $child->getBirthDate());
+
+        $this->assertTrue($parent->hasChildren());
+        $this->assertCount(1, $parent->getChildren());
+        $this->assertContainsEquals($child, $parent->getChildren());
         $this->assertContainsEquals($child, $parent->getChildren());
     }
 
@@ -85,6 +107,7 @@ final class MemberTest extends TestCase
         $this->assertEquals(0, array_search($firstSon, $parent->getChildren()));
         $this->assertEquals(1, array_search($secondSon, $parent->getChildren()));
         $this->assertEquals(2, array_search($thirdSon, $parent->getChildren()));
+        $this->assertTrue($firstSon->isTheOldestSon());
 
         // We add another child with the same birthDate as the older one, but expect to see him first because it has
         // a name that comes first in alphabetical order
@@ -93,6 +116,7 @@ final class MemberTest extends TestCase
         $this->assertEquals(1, array_search($firstSon, $parent->getChildren()));
         $this->assertEquals(2, array_search($secondSon, $parent->getChildren()));
         $this->assertEquals(3, array_search($thirdSon, $parent->getChildren()));
+        $this->assertTrue($previousSon->isTheOldestSon());
     }
 
     public function testTheyDieAt100YearsOld() : void
@@ -148,15 +172,71 @@ final class MemberTest extends TestCase
         $G = $C->giveBirth('G', DateTimeImmutable::createFromFormat('d/m/Y', '11/03/1985'));
         $H = $C->giveBirth('H', DateTimeImmutable::createFromFormat('d/m/Y', '04/09/1986'));
 
-        // Inject assets
-        $A->addAssets(new Money(100000), new RealEstate(7), new Lands(5000));
-        $B->addAssets(new Money(3000), new RealEstate(2), new Lands(6000));
-        $D->addAssets(new Money(1000), new Lands(200));
-        $I->addAssets(new RealEstate(1));
-        $F->addAssets(new Money(12000));
-        $C->addAssets(new Money(10000), new RealEstate(5));
-        $G->addAssets(new Money(500), new Lands(500));
-        $H->addAssets(new Money(2000), new RealEstate(3), new Lands(7000));
+        // Inject assets to A and check they exist
+        $aMoney = new Money(100000);
+        $aLands = new Lands(5000);
+        $aProperties = new RealEstate(7);
+        $A->addAssets($aMoney, $aLands, $aProperties);
+        $aAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($A->getAssets());
+        $this->assertContains($aMoney, $aAssets);
+        $this->assertContains($aLands, $aAssets);
+        $this->assertContains($aProperties, $aAssets);
+
+        // Inject assets to B and check they exist
+        $bMoney = new Money(3000);
+        $bLands = new Lands(6000);
+        $bProperties = new RealEstate(2);
+        $B->addAssets($bMoney, $bLands, $bProperties);
+        $bAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($B->getAssets());
+        $this->assertContains($bMoney, $bAssets);
+        $this->assertContains($bLands, $bAssets);
+        $this->assertContains($bProperties, $bAssets);
+
+        // Inject assets to D and check they exist
+        $dMoney = new Money(1000);
+        $dLands = new Lands(200);
+        $D->addAssets($dMoney, $dLands);
+        $dAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($D->getAssets());
+        $this->assertContains($dMoney, $dAssets);
+        $this->assertContains($dLands, $dAssets);
+
+        // Inject assets to I and check they exist
+        $iProperties = new RealEstate(1);
+        $I->addAssets($iProperties);
+        $iAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($I->getAssets());
+        $this->assertContains($iProperties, $iAssets);
+
+        // Inject assets to F and check they exist
+        $fMoney = new Money(12000);
+        $F->addAssets($fMoney);
+        $fAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($F->getAssets());
+        $this->assertContains($fMoney, $fAssets);
+
+        // Inject assets to C and check they exist
+        $cMoney = new Money(10000);
+        $cProperties = new RealEstate(5);
+        $C->addAssets($cMoney, $cProperties);
+        $cAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($C->getAssets());
+        $this->assertContains($cMoney, $cAssets);
+        $this->assertContains($cProperties, $cAssets);
+
+        // Inject assets to G and check they exist
+        $gMoney = new Money(500);
+        $gLands = new Lands(500);
+        $G->addAssets($gMoney, $gLands);
+        $gAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($G->getAssets());
+        $this->assertContains($gMoney, $gAssets);
+        $this->assertContains($gLands, $gAssets);
+
+        // Inject assets to H and check they exist
+        $hMoney = new Money(2000);
+        $hLands = new Lands(7000);
+        $hProperties = new RealEstate(3);
+        $H->addAssets($hMoney, $hLands, $hProperties);
+        $hAssets = (new ReflectionClass(AssetCollection::class))->getProperty('assets')->getValue($H->getAssets());
+        $this->assertContains($hMoney, $hAssets);
+        $this->assertContains($hLands, $hAssets);
+        $this->assertContains($hProperties, $hAssets);
 
         // Create the heritage calculator
         $heritageCalculator = new HeritageCalculator();
