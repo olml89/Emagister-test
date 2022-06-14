@@ -123,6 +123,35 @@ final class HeritageCalculatorTest extends TestCase
         $this->assertEquals(2083, $this->heritageCalculator->getHeritage($J));
     }
 
+    public function testReadmeFile() : void
+    {
+        // Build the family tree
+        $A = Member::born('A', DateTimeImmutable::createFromFormat('d/m/Y', '02/02/1920'));
+        $B = $A->giveBirth('B', DateTimeImmutable::createFromFormat('d/m/Y', '05/05/1950'));
+        $D = $B->giveBirth('D', DateTimeImmutable::createFromFormat('d/m/Y', '08/08/1980'));
+        $I = $D->giveBirth('I', DateTimeImmutable::createFromFormat('d/m/Y', '10/10/2010'));
+        $J = $D->giveBirth('J', DateTimeImmutable::createFromFormat('d/m/Y', '03/03/2012'));
+        $E = $B->giveBirth('E', DateTimeImmutable::createFromFormat('d/m/Y', '06/07/1982'));
+        $F = $B->giveBirth('F', DateTimeImmutable::createFromFormat('d/m/Y', '07/02/1984'));
+        $C = $A->giveBirth('C', DateTimeImmutable::createFromFormat('d/m/Y', '01/02/1953'));
+        $G = $C->giveBirth('G', DateTimeImmutable::createFromFormat('d/m/Y', '11/03/1985'));
+        $H = $C->giveBirth('H', DateTimeImmutable::createFromFormat('d/m/Y', '04/09/1986'));
+
+        // Set 100000 € as heritage for A
+        $A->addAsset(new Money(100000));
+
+        // Run tests
+        $this->assertEquals(2084, $I->getHeritage($this->heritageCalculator));
+        $this->assertEquals(2084, $this->heritageCalculator->getHeritage($I));
+        $this->assertEquals(2084, $I->getPatrimony($this->heritageCalculator));
+        $I->addAsset(new Money(1000));
+        $this->assertEquals(3084, $I->getPatrimony($this->heritageCalculator));
+        $certainDeadForB = DateTimeImmutable::createFromFormat('d/m/Y', '06/05/2050');
+        $this->assertEquals(0, $B->getPatrimony($this->heritageCalculator, $certainDeadForB));
+        $this->assertEquals(4167, $I->getHeritage($this->heritageCalculator, $certainDeadForB));
+        $this->assertEquals(5167, $I->getPatrimony($this->heritageCalculator, $certainDeadForB));
+    }
+
     public function testLandHeritage() : void
     {
         // Build the family tree
