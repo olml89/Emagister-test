@@ -1,3 +1,5 @@
+[![Coverage Status](https://codecov.io/gh/olml89/Emagister-test/branch/main/graph/badge.svg)](https://codecov.io/gh/olml89/Emagister-test)
+
 # Reparto de Herencias
 Implementación de un test técnico para la candidatura a un rol de desarrollador sénior PHP en Emagister
 
